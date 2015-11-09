@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+Flask-Script
+Flask-Migrate
+Flask-WTF
+Flask-HTTPAuth
+Flask-RESTful
+Flask-Bcrypt
+wtforms
+wtforms_alchemy
+MySQL-python
