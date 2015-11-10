@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 
 from flask import g, jsonify
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 from app import api, app, auth, db, flask_bcrypt
 from app.models import User
@@ -35,13 +35,18 @@ class UserView(Resource):
         return jsonify({'username':user.username})
 
 class SessionView(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('username', type=str, location='json')
+        self.parser.add_argument('password', type=str, location='json')
+
     def post(self):
-        form = SessionCreateForm()
-        if not form.validate_on_submit():
-            return form.errors, 422
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and flask_bcrypt.check_password_hash(user.password, form.password.data):
-            return jsonify({'username':user.username})
+        args = self.parser.parse_args()
+        print args['username']
+        user = User.query.filter_by(username=args['username']).first()
+        if user and flask_bcrypt.check_password_hash(user.password, args['password']):
+            print user.generate_auth_token()
+            return jsonify({'username':user.username, 'token': user.generate_auth_token()})
         return '', 401
 
 api.add_resource(UserView, '/api/users')

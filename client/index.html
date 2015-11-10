@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>读读网内容管理</title>
-    <link src="./node_modules/bootstrap/dist/css/botstrap.min.css" >
-    <link src="./css/base.css">
-  </head>
-  <body ng-app="app">
-    <nav class="navbar navbar-fixed-top">
+<html ng-app="app" ng-controller="AppCtrl">
+    <head>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>读读网内容管理</title>
+        <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="./dist/css/base.css">
+    </head>
+    <body>
+<nav class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -43,11 +43,14 @@
       </div>
     </nav>
 
-    <div class="container" ng-view>
+    <div class="container">
+      <div ng-view></div>
     </div>
 
-    <script src="./node_modules/jquery/dist/jquery.min.css"></script>
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="./node_modules/angualr/angular.js"></script>
-  </body>
+    <script src="./node_modules/angular/angular.js"></script>
+    <script src="./node_modules/angular-route/angular-route.js"></script>
+    <script src="./dist/js/app.js"></script>
+    </body>
 </html>
