@@ -6,6 +6,40 @@ var options = {};
 options.api = {};
 options.api.base_url = 'http://127.0.0.1:5000/api';
 
+//item kind 
+var item_kinds = [
+    {
+        name: 'ebook',
+        value: 1
+    }, {
+        name: 'audiobook',
+        value: 2
+    }, {
+        name: 'videos',
+        value: 3
+    }, {
+        name: 'music',
+        value: 4
+    }, {
+        name: 'images',
+        value: 5
+    }
+];
+
+//item lang
+var item_lang = [
+    {
+        name: 'hanyu',
+        value: 1
+    }, {
+        name: 'weiyu',
+        value: 2
+    }, {
+        name: 'hayu',
+        value: 3
+    }
+];
+
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
 });
@@ -58,7 +92,7 @@ app.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
         request: function (config) {
             config.headers = config.headers || {};
             if ($window.sessionStorage.token) {
-                config.headers.Authorization = 'Base ' + $window.sessionStorage.token + ':x';
+                config.headers.Authorization = 'Basic ' + $window.sessionStorage.token + ':x';
             }
             return config;
         },

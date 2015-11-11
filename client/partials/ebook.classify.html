@@ -1,9 +1,45 @@
 <div class="row">
   <div ng-include="'partials/ebook.nav.html'"></div>
 
-  <div class="col-sm-10">
-    <button class="btn btn-default">添加一级分类</button>
+  <div class="col-sm-10 row" ng-show="showAddTopClassifyBtn && showAddClassifyBtn">
+    <button class="btn btn-default" ng-click="showAddTopClassifyForm()">添加一级分类</button>
     <button class="btn btn-default">添加二级分类</button>
   </div>
+  <div class="col-sm-10" ng-hide="showAddTopClassifyBtn">
+    <form class="form-horizontal" role="form" name="topClassifyForm">
+      <span class="help-block">* signed must be did!</span>
+      <div class="form-group">
+        <label class="control-label col-sm-2">name*</label>
+        <div class="col-sm-2">
+          <input type="text" class="form-control" ng-model="topClassify.name" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">lang*</label>
+        <div class="col-sm-2">
+          <select class="form-control" ng-model="topClassify.lang" ng-options="lang.name for lang in item_lang" required>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">type*</label>
+        <div class="col-sm-2">
+          <select class="form-control" ng-model="topClassify.kind" ng-options="kind.name for kind in item_kinds" required>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">desc</label>
+        <div class="col-sm-2">
+          <textarea class="form-control" ng-model="topClassify.desc" row="1"></textarea>
+        </div>
+      </div>
+      <div>
+      <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-2">
+          <button type="button" class="btn btn-success" ng-click="addTopClassify(topClassify.name, topClassify.lang, topClassify.kind, topClassify.desc)" ng-disabled="!topClassifyForm.$valid">add</button>
+        </div>
+      </div>
+    </form>
 </div>
  

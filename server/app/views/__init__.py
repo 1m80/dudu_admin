@@ -2,7 +2,7 @@
 
 from app import app
 
-from . import user
+from . import user, ebook
 
 @app.after_request
 def after_request(response):

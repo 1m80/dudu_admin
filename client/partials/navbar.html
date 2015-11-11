@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-static-top" ng-controller="NavbarCtrl">
+<nav class="navbar navbar-default navbar-fixed-top" ng-controller="NavbarCtrl">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -9,7 +9,7 @@
       </button>
       <a class="navbar-brand" href="/">读读网内容管理</a>
     </div>
-    <div id="navbar" class="navbar-collapse collapse">
+    <div id="navbar" class="navbar-collapse coolapse">
       <ul class="nav navbar-nav">
         <li ng-class="{active: isActive('')}"><a href="/">首页</a></li>
         <li class="dropdown" ng-class="{active: isActive('ebooks')}">
@@ -24,7 +24,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ username }}<span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{ username }}<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#" ng-click="signOut()">登出</a></li>
           </ul>
