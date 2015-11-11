@@ -11,12 +11,13 @@ app.config(function ($httpProvider) {
 });
 
 app.controller('AppCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',
-    function AdminUserCtrl($scope, $location, $window, UserService, AuthenticationService) {
+    function AppCtrl($scope, $location, $window, UserService, AuthenticationService) {
         $scope.signIn = function signIn(username, password) {
             if (username != undefined && password !== undefined) {
                 UserService.signIn(username, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
+                    $scope.username = data.username;
                     $location.path('/');
                 }).error(function(status, data) {
                     console.log(status);
@@ -29,6 +30,7 @@ app.controller('AppCtrl', ['$scope', '$location', '$window', 'UserService', 'Aut
             if (AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = false;
                 delete $window.sessionStorage.token;
+                console.log('signout');
                 $location.path('/signin');
             }
         }
@@ -101,6 +103,11 @@ app.config(['$locationProvider', '$routeProvider',
             templateUrl: 'partials/ebook.list.html',
             access: { requireAuthentication: true }
         }).
+          when('/ebooks/classifys', {
+              templateUrl: 'partials/ebook.classify.html',
+              controller: 'EbookClassifyCtrl',
+              access: { requireAuthentication: true }
+        }).
         when('/ebooks/:id', {
             templateUrl: 'partials/ebook.view.html',
             controller: 'EbookViewCtrl',
@@ -112,6 +119,8 @@ app.config(['$locationProvider', '$routeProvider',
         otherwise({
             redirectTo: '/'
         });
+
+    $location.html5Mode(true);
 }]);
 
 
@@ -123,7 +132,19 @@ app.run(function($rootScope, $location, $window, AuthenticationService) {
     });
 });
 
+app.controller('EbookClassifyCtrl', function($scope) {
+    $scope.showAddTopClassifyBtn = true;
+    $scope.showAddClassifyBtn = true;
+});
+
 app.controller('HomeCtrl', function($scope) {
     
+});
+
+app.controller('NavbarCtrl', function ($scope, AuthenticationService, $location) {
+    $scope.isActive = function (route) {
+        return route === $location.path().split('/')[1];
+    };
+    $scope.username = $scope.parent.username;
 });
 

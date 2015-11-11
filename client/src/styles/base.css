@@ -22,3 +22,8 @@ a:focus {
    margin-right: auto;
    margin-left: auto;
 }
+
+.block-content {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
