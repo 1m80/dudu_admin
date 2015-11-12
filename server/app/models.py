@@ -18,7 +18,7 @@ class User(db.Model):
     def verify_password(self, password):
         return flask_bcrypt.check_password_hash(self.password, password)
 
-    def generate_auth_token(self, expiration=600):
+    def generate_auth_token(self, expiration=21600):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'id': self.id})
 

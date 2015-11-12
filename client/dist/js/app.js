@@ -7,36 +7,36 @@ options.api = {};
 options.api.base_url = 'http://127.0.0.1:5000/api';
 
 //item kind 
-var item_kinds = [
+var item_types = [
     {
-        name: 'ebook',
-        value: 1
+        name: '电子书',
+        id: 1
     }, {
-        name: 'audiobook',
-        value: 2
+        name: '有声读物',
+        id: 2
     }, {
-        name: 'videos',
-        value: 3
+        name: '视频',
+        id: 3
     }, {
-        name: 'music',
-        value: 4
+        name: '音乐',
+        id: 4
     }, {
-        name: 'images',
-        value: 5
+        name: '图片',
+        id: 5
     }
 ];
 
 //item lang
 var item_lang = [
     {
-        name: 'hanyu',
-        value: 1
+        name: '汉语',
+        id: 1
     }, {
-        name: 'weiyu',
-        value: 2
+        name: '维语',
+        id: 2
     }, {
-        name: 'hayu',
-        value: 3
+        name: '哈语',
+        id: 3
     }
 ];
 
@@ -92,7 +92,7 @@ app.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
         request: function (config) {
             config.headers = config.headers || {};
             if ($window.sessionStorage.token) {
-                config.headers.Authorization = 'Basic ' + $window.sessionStorage.token + ':x';
+                config.headers.Authorization = 'Basic ' + $window.sessionStorage.token;
             }
             return config;
         },
@@ -167,24 +167,39 @@ app.run(function($rootScope, $location, $window, AuthenticationService) {
 });
 
 app.controller('EbookClassifyCtrl', function($scope, $http) {
-    //sign to show or hide the (add button && add form)
+    // sign to show or hide the (add button && add form)
     $scope.showAddTopClassifyBtn = true;
     $scope.showAddClassifyBtn = true;
 
-    //some value use for select element
-    $scope.item_kinds = item_kinds;
+    // some value use for select element
     $scope.item_lang = item_lang;
 
-    //show add top classify form
+    // show add top classify form
     $scope.showAddTopClassifyForm = function() {
         $scope.showAddTopClassifyBtn = false;
     };
 
-    $scope.addTopClassify = function(name, lang, kind, desc) {
+    // post new top_classify data to server
+    $scope.addTopClassify = function(name, lang, desc) {
         $scope.showAddTopClassifyBtn = true;
 
-        $http.post(options.api.base_url+'/topclassifys', JSON.stringify({name:name, lang:lang.value, kind:kind.value, desc:desc}));
+        $http.post(options.api.base_url+'/topclassifys', JSON.stringify({name:name, lang:lang.id, item_type:1, desc:desc})).
+            success(function() {
+            }).error(function(data) {
+                alert(data.message);
+            });
     };
+
+    // show add classify form
+    $scope.showAddClassifyForm = function() {
+        $scope.showAddClassifyBtn = false;
+    };
+
+    // poset new classify data to server
+    $scope.addClassify = function(name ,top_classify, desc ) {
+        $scope.showAddClassifyBtn = true;
+        console.log(name, top_classify.id, desc)
+    }
 });
 
 app.controller('HomeCtrl', function($scope) {

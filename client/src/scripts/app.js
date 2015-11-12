@@ -7,36 +7,36 @@ options.api = {};
 options.api.base_url = 'http://127.0.0.1:5000/api';
 
 //item kind 
-var item_kinds = [
+var item_types = [
     {
-        name: 'ebook',
-        value: 1
+        name: '电子书',
+        id: 1
     }, {
-        name: 'audiobook',
-        value: 2
+        name: '有声读物',
+        id: 2
     }, {
-        name: 'videos',
-        value: 3
+        name: '视频',
+        id: 3
     }, {
-        name: 'music',
-        value: 4
+        name: '音乐',
+        id: 4
     }, {
-        name: 'images',
-        value: 5
+        name: '图片',
+        id: 5
     }
 ];
 
 //item lang
 var item_lang = [
     {
-        name: 'hanyu',
-        value: 1
+        name: '汉语',
+        id: 1
     }, {
-        name: 'weiyu',
-        value: 2
+        name: '维语',
+        id: 2
     }, {
-        name: 'hayu',
-        value: 3
+        name: '哈语',
+        id: 3
     }
 ];
 
@@ -92,7 +92,7 @@ app.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
         request: function (config) {
             config.headers = config.headers || {};
             if ($window.sessionStorage.token) {
-                config.headers.Authorization = 'Basic ' + $window.sessionStorage.token + ':x';
+                config.headers.Authorization = 'Basic ' + $window.sessionStorage.token;
             }
             return config;
         },
