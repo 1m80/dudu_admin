@@ -1,4 +1,4 @@
-app.controller('EbookClassifyCtrl', function($scope, $http) {
+app.controller('EbookClassifyCtrl', function($scope, $http, Restangular) {
     // sign to show or hide the (add button && add form)
     $scope.showAddTopClassifyBtn = true;
     $scope.showAddClassifyBtn = true;
@@ -15,7 +15,7 @@ app.controller('EbookClassifyCtrl', function($scope, $http) {
     $scope.addTopClassify = function(name, lang, desc) {
         $scope.showAddTopClassifyBtn = true;
 
-        $http.post(options.api.base_url+'/topclassifys', JSON.stringify({name:name, lang:lang.id, item_type:1, desc:desc})).
+        $http.post(options.api.base_url+'/topclassifys/item_type/1', JSON.stringify({name:name, lang:lang.id,esc:desc})).
             success(function() {
             }).error(function(data) {
                 alert(data.message);
@@ -25,6 +25,17 @@ app.controller('EbookClassifyCtrl', function($scope, $http) {
     // show add classify form
     $scope.showAddClassifyForm = function() {
         $scope.showAddClassifyBtn = false;
+
+        //get top_classifys from server
+
+        /*
+        $http.get(options.api.base_url+'/top_classifys/item_type/1').success(function(response) {
+            $scope.top_classifys = response.top_classifys;
+            console.log($scope.top_classifys);
+        });
+        */
+        var top_classifys = Restangular.one('/top_classifys/item_type/1').getList();
+        console.log(top_classifys);
     };
 
     // poset new classify data to server
