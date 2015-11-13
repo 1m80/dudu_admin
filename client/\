@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html ng-app="app" ng-controller="AppCtrl">
+    <head>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <base href="/">
+      <title>读读网内容管理</title>
+      <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+      <link rel="stylesheet" type="text/css" href="./dist/css/base.css">
+    </head>
+    <body>
+    <div class="container">
+      <div ng-include="'partials/navbar.html'"></div>
+      <div ng-view></div>
+    </div>
+
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./node_modules/angular/angular.js"></script>
+    <script src="./node_modules/angular-route/angular-route.js"></script>
+    <script src="./bower_components/lodash/lodash.js"></script>
+    <script src="./node_modules/restangular/dist/restangular.js"></script>
+    <script src="./node_modules/angular-local-storage/dist/angular-local-storage.js"></script>
+    <script src="./dist/js/app.js"></script>
+    </body>
+</html>

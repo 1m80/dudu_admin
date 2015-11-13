@@ -1,6 +1,6 @@
 'use strict';
 
-var app =angular.module('app', ['ngRoute', 'restangular']);
+var app =angular.module('app', ['ngRoute']);
 
 var options = {};
 options.api = {};
@@ -121,9 +121,8 @@ app.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
     };
 });
 
-app.config(function ($httpProvider, RestangularProvider) {
+app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
-    RestangularProvider.setBaseUrl(options.api.base_url);
 });
 
 app.config(['$locationProvider', '$routeProvider', 

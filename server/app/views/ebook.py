@@ -14,7 +14,6 @@ top_classify_fields = {
 }
 
 class TopClassifyListView(Resource):
-    decorators = [auth.login_required]
 
     def __init__(self):
         self.parser = reqparse.RequestParser()
@@ -25,9 +24,10 @@ class TopClassifyListView(Resource):
 
     def get(self, item_type):
         top_classifys = TopClassify.query.filter_by(item_type=item_type).all()
-        return {'top_classifys': marshal(top_classifys, top_classify_fields)}
+        return {'top_classifys': 'asdf'}
 
 
+    @auth.login_required
     def post(self, item_type):
         args = self.parser.parse_args()
         name = args['name']
@@ -43,4 +43,4 @@ class TopClassifyListView(Resource):
         return make_response(jsonify({'message':u'参数有误'}), 400)
 
 
-api.add_resource(TopClassifyListView, '/api/topclassifys/item_type/<int:item_type>')
+api.add_resource(TopClassifyListView, '/api/top_classifys/item_type/<int:item_type>')
