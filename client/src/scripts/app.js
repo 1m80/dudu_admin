@@ -147,6 +147,15 @@ app.config(['$locationProvider', '$routeProvider',
             controller: 'EbookViewCtrl',
             access: { requireAuthentication: true }
         }).
+        when('/data', {
+            tempalteUrl:'partials/data.home.html',
+            access: { requireAuthentication: true }
+        }).
+          when('/data/tag', {
+              templateUrl: 'partials/data.tag.html',
+              controller: 'TagViewCtrl',
+              access: { requireAuthentication: true }
+          })
         when('/signin', {
             templateUrl: 'partials/user.signin.html'
         }).

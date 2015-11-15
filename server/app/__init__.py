@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_httpauth import HTTPBasicAuth
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_json import FlaskJSON
 
 from config import config
 
@@ -18,6 +19,7 @@ db = SQLAlchemy(app)
 api = Api(app)
 flask_bcrypt = Bcrypt(app)
 auth = HTTPBasicAuth()
+json = FlaskJSON(app)
 
 import views
 import models

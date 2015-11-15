@@ -9,3 +9,4 @@ Flask-Bcrypt
 wtforms
 wtforms_alchemy
 MySQL-python
+Flask-JSON

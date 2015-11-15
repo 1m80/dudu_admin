@@ -1,0 +1,39 @@
+<div class="row">
+  <div ng-include="'partials/data.nav.html'"></div>
+
+  <div class="col-sm-10 row" ng-show="showAddTagBtn">
+    <button class="btn btn-default" ng-click="showAddTagForm()">add Tag</button>
+  </div>
+
+  <div class="col-sm-10" ng-hide="showAddTagBtn">
+    <h2>add Tag</h2>
+    <form class="form-horizontal" role="form" name="addTagForm">
+      <span class="help-block">*标记的必须填写</span>
+      <div class="form-group">
+        <label class="control-label col-sm-2">name*</label>
+        <div class="col-sm-2">
+          <input type="text" class="form-control" ng-model="addTag.name" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">语言*</label>
+        <div class="col-sm-2">
+          <select class="form-control" ng-model="addTag.lang" ng-options="lang.name for lang in item_lang" required>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2">描述</label>
+        <div class="col-sm-2">
+          <textarea class="form-control" ng-model="addTag.desc" row="1"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-2">
+          <button type="button" class="btn btn-success" ng-click="addTag(addTag.name, addTag.lang, addTag.desc)" ng-disabled="!addTagForm.$valid">add</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>

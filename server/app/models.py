@@ -64,6 +64,7 @@ class Tag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
+    lang = db.Column(db.Integer, nullable=False)
     desc = db.Column(db.Text)
 
 class Common(db.Model):
