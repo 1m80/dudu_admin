@@ -6,7 +6,7 @@ from flask_restful import abort
 from app import app, auth
 from app.models import User
 
-from . import user, ebook
+from . import user, ebook, data
 
 @app.after_request
 def after_request(response):

@@ -137,10 +137,10 @@ app.config(['$locationProvider', '$routeProvider',
             templateUrl: 'partials/ebook.list.html',
             access: { requireAuthentication: true }
         }).
-          when('/ebooks/classifys', {
-              templateUrl: 'partials/ebook.classify.html',
-              controller: 'EbookClassifyCtrl',
-              access: { requireAuthentication: true }
+        when('/ebooks/classifys', {
+            templateUrl: 'partials/ebook.classify.html',
+            controller: 'EbookClassifyCtrl',
+            access: { requireAuthentication: true }
         }).
         when('/ebooks/:id', {
             templateUrl: 'partials/ebook.view.html',
@@ -148,14 +148,14 @@ app.config(['$locationProvider', '$routeProvider',
             access: { requireAuthentication: true }
         }).
         when('/data', {
-            tempalteUrl:'partials/data.home.html',
+            templateUrl:'partials/data.home.html',
             access: { requireAuthentication: true }
         }).
-          when('/data/tag', {
-              templateUrl: 'partials/data.tag.html',
-              controller: 'TagViewCtrl',
-              access: { requireAuthentication: true }
-          })
+        when('/data/tag', {
+            templateUrl: 'partials/data.tag.html',
+            controller: 'TagViewCtrl',
+            access: { requireAuthentication: true }
+        }).
         when('/signin', {
             templateUrl: 'partials/user.signin.html'
         }).

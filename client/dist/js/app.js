@@ -137,10 +137,10 @@ app.config(['$locationProvider', '$routeProvider',
             templateUrl: 'partials/ebook.list.html',
             access: { requireAuthentication: true }
         }).
-          when('/ebooks/classifys', {
-              templateUrl: 'partials/ebook.classify.html',
-              controller: 'EbookClassifyCtrl',
-              access: { requireAuthentication: true }
+        when('/ebooks/classifys', {
+            templateUrl: 'partials/ebook.classify.html',
+            controller: 'EbookClassifyCtrl',
+            access: { requireAuthentication: true }
         }).
         when('/ebooks/:id', {
             templateUrl: 'partials/ebook.view.html',
@@ -148,14 +148,14 @@ app.config(['$locationProvider', '$routeProvider',
             access: { requireAuthentication: true }
         }).
         when('/data', {
-            tempalteUrl:'partials/data.home.html',
+            templateUrl:'partials/data.home.html',
             access: { requireAuthentication: true }
         }).
-          when('/data/tag', {
-              templateUrl: 'partials/data.tag.html',
-              controller: 'TagViewCtrl',
-              access: { requireAuthentication: true }
-          })
+        when('/data/tag', {
+            templateUrl: 'partials/data.tag.html',
+            controller: 'TagViewCtrl',
+            access: { requireAuthentication: true }
+        }).
         when('/signin', {
             templateUrl: 'partials/user.signin.html'
         }).
@@ -232,8 +232,27 @@ app.controller('NavbarCtrl', function ($scope, AuthenticationService, $location)
     };
 });
 
-app.controller('TagViewCtrl', function($scope) {
-    
+app.controller('TagViewCtrl', function($scope, $http) {
+    // sign of show/hide the add button/form
+    $scope.showAddTagBtn = true;
+
+    // some value use for select element
+    $scope.item_lang = item_lang;
+
+    // show add Tag form
+    $scope.showAddTagForm = function() {
+        $scope.showAddTagBtn = false;
+    }
+
+    $scope.addTag = function(name, lang, desc) {
+        $scope.showAddTagBtn = true;
+
+        if (desc === undefined) {
+            desc = '';
+        }
+
+        $http.post(options.api.base_url+'/tags/lang_type/'+lang.id, JSON.stringify({name:name, lang:lang.id, desc:desc}));
+    }
 });
 
 app.factory('TopClassify', function(Restangular) {
