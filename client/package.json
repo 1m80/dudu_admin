@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.4.7",
+    "angular-formly": "^7.3.3",
     "angular-route": "^1.4.7",
+    "api-check": "^7.5.5",
     "bootstrap": "^3.3.5",
     "express": "^4.13.3",
     "jquery": "^2.1.4",

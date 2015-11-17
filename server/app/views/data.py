@@ -21,24 +21,24 @@ class TagListView(Resource):
         self.parser.add_argument('lang', type=int, location='json')
         self.parser.add_argument('desc', type=unicode, location='json')
 
-    def get(self):
+    def get(self, lang_type):
         pass
 
-    @auth.login_required
+    #@auth.login_required
     def post(self, lang_type):
         args = self.parser.parse_args()
         name = args['name']
         desc = args['desc']
         lang = args['lang']
         if name and lang:
-            if not Tag.query.fitler_by(name=name, lang=lang).first():
+            if not Tag.query.filter_by(name=name, lang=lang).first():
                 tag = Tag(name=name, lang=lang, desc=desc)
                 db.session.add(tag)
-                db.sessoin.commit()
-                return {'tags': marsha(tag, tag_fields)}, 20
+                db.session.commit()
+                return {'tags': marshal(tag, tag_fields)}, 201
 
             return make_response(jsonify({'message':u'该标签已存在'}), 422)
         return make_response(jsonify({'message':u'参数有误'}), 400)
 
 
-api.add_resource(TagListView, '/tags/lang_type/<int:lang_type>')
+api.add_resource(TagListView, '/api/tags/lang_type/<int:lang_type>')

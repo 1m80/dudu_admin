@@ -1,0 +1,14 @@
+<div class="row">
+  <div ng-include="'partials/ebook.nav.html'"></div>
+
+  <div class="col-sm-10 row">
+    <h2>添加电子书</h2>
+    <form ng-submit="vm.onSubmit()" name="vm.form" novalidate>
+      <formly-form model="vm.model" fields="vm.fields" options="vm.options" form="fm.form">
+        <button type="submit" class="btn btn-primary submit-button" ng-disabled="vm.form.$invalid">提交</button>
+        <button type="button" class="btn btn-default" ng-click="vm.options.resetModel()">Reset</button>
+    </form>
+    <h2>Form data</h2>
+    <pre>{{ vm.model | json }}</pre>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-app.controller('TagViewCtrl', function($scope, $http) {
+app.controller('TagViewCtrl', function($scope, $http, Tag) {
     // sign of show/hide the add button/form
     $scope.showAddTagBtn = true;
 
@@ -8,7 +8,7 @@ app.controller('TagViewCtrl', function($scope, $http) {
     // show add Tag form
     $scope.showAddTagForm = function() {
         $scope.showAddTagBtn = false;
-    }
+    };
 
     $scope.addTag = function(name, lang, desc) {
         $scope.showAddTagBtn = true;
@@ -17,6 +17,8 @@ app.controller('TagViewCtrl', function($scope, $http) {
             desc = '';
         }
 
-        $http.post(options.api.base_url+'/tags/lang_type/'+lang.id, JSON.stringify({name:name, lang:lang.id, desc:desc}));
+        Tag.create(lang.id, {name:name, lang:lang.id, desc:desc}).success(function() {
+            console.log('ok');
+        });
     }
 });

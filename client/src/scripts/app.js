@@ -1,6 +1,6 @@
 'use strict';
 
-var app =angular.module('app', ['ngRoute']);
+var app =angular.module('app', ['ngRoute', 'formly', 'formlyBootstrap']);
 
 var options = {};
 options.api = {};
@@ -135,6 +135,11 @@ app.config(['$locationProvider', '$routeProvider',
         }).
         when('/ebooks', {
             templateUrl: 'partials/ebook.list.html',
+            access: { requireAuthentication: true }
+        }).
+        when('/ebooks/create', {
+            templateUrl: 'partials/ebook.create.html',
+            controller: 'EbookCreateCtrl',
             access: { requireAuthentication: true }
         }).
         when('/ebooks/classifys', {
