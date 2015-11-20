@@ -12,14 +12,14 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 
     // post new top_classify data to server
-    $scope.addTopClassify = function(name, lang, desc) {
+    $scope.addTopClassify = function(title, lang, desc) {
         $scope.showAddTopClassifyBtn = true;
 
         if (desc=== undefined) {
             desc = '';
         }
 
-        $http.post(options.api.base_url+'/top_classifys/item_type/1', JSON.stringify({name:name, lang:lang.id,desc:desc})).
+        $http.post(options.api.base_url+'/top_classifys/item_type/1', JSON.stringify({title:title, lang:lang.id,desc:desc})).
             success(function() {
             });
     };
@@ -34,13 +34,13 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 
     // post new classify data to server
-    $scope.addClassify = function(name ,top_classify, desc ) {
+    $scope.addClassify = function(title ,top_classify, desc ) {
         $scope.showAddClassifyBtn = true;
 
         if (desc === undefined) {
             desc = '';
         }
 
-        $http.post(options.api.base_url+'/classifys/item_type/1', JSON.stringify({name:name, top_classify:top_classify.id, desc:desc}));
+        $http.post(options.api.base_url+'/classifys/item_type/1', JSON.stringify({title:title, top_classify:top_classify.id, desc:desc}));
     };
 });

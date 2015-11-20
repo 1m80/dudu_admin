@@ -1,6 +1,6 @@
 'use strict';
 
-var app =angular.module('app', ['ngRoute', 'formly', 'formlyBootstrap']);
+var app =angular.module('app', ['ngRoute', 'ngSanitize', 'ui.select', 'angular.filter', 'ui.tinymce']);
 
 var options = {};
 options.api = {};
@@ -9,19 +9,19 @@ options.api.base_url = 'http://127.0.0.1:5000/api';
 //item kind 
 var item_types = [
     {
-        name: '电子书',
+        title: '电子书',
         id: 1
     }, {
-        name: '有声读物',
+        title: '有声读物',
         id: 2
     }, {
-        name: '视频',
+        title: '视频',
         id: 3
     }, {
-        name: '音乐',
+        title: '音乐',
         id: 4
     }, {
-        name: '图片',
+        title: '图片',
         id: 5
     }
 ];
@@ -29,13 +29,13 @@ var item_types = [
 //item lang
 var item_lang = [
     {
-        name: '汉语',
+        title: '汉语',
         id: 1
     }, {
-        name: '维语',
+        title: '维语',
         id: 2
     }, {
-        name: '哈语',
+        title: '哈语',
         id: 3
     }
 ];
@@ -194,14 +194,14 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 
     // post new top_classify data to server
-    $scope.addTopClassify = function(name, lang, desc) {
+    $scope.addTopClassify = function(title, lang, desc) {
         $scope.showAddTopClassifyBtn = true;
 
         if (desc=== undefined) {
             desc = '';
         }
 
-        $http.post(options.api.base_url+'/top_classifys/item_type/1', JSON.stringify({name:name, lang:lang.id,desc:desc})).
+        $http.post(options.api.base_url+'/top_classifys/item_type/1', JSON.stringify({title:title, lang:lang.id,desc:desc})).
             success(function() {
             });
     };
@@ -216,98 +216,52 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 
     // post new classify data to server
-    $scope.addClassify = function(name ,top_classify, desc ) {
+    $scope.addClassify = function(title ,top_classify, desc ) {
         $scope.showAddClassifyBtn = true;
 
         if (desc === undefined) {
             desc = '';
         }
 
-        $http.post(options.api.base_url+'/classifys/item_type/1', JSON.stringify({name:name, top_classify:top_classify.id, desc:desc}));
+        $http.post(options.api.base_url+'/classifys/item_type/1', JSON.stringify({title:title, top_classify:top_classify.id, desc:desc}));
     };
 });
 
-app.controller('EbookCreateCtrl', function($scope ) {
-    var vm = this;
+app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
+    var vm = $scope.vm = {};
 
-    $scope.test = 'asdf';
+    // assignment
+    vm.item_lang = item_lang;
 
-    // function assignment
-    vm.onSubmit = onSubmit;
+    //get from server
+    Classify.gets(1).success(function(response) {
+        vm.top_classifys = response.top_classifys;
+        vm.classifys = response.classifys;
+    })
 
-    //variable assignment
-    vm.model = {
-        awesome: true
-    };
-    vm.options = {
-        formState: {
-            awesomeIsForced: false
-        }
-    };
-    vm.fields = [
-        {
-            key: 'title',
-            type: 'input',
-            templateOptions: {
-                label: '书名',
-                placeholder: '在此填写汉文书名'
-            }
-        },
-        {
-            key: 'lang',
-            type: 'checkbox',
-            templateOptions: {
-                label: '语种'
-            },
-            watcher: {
-                listener: function(field, newValue, oldValue, formScope, stopWatching) {
-                    if (newValue) {
-                        stopWatching();
-                        formScope.model.desc = 'adsfasdf';
-                        formState.options.formState.awesomeIsForced = true;
-                    }
-                }
-            }
-        },
-        {
-            key: 'title_plus',
-            key: 'input',
-            templateOptions: {
-                label: '书名+'
-            },
-            expressionProperties: {
-                'templateOptions.disabled':'formState.awesomeIsForced',
-                'templateOptions.label': function(viewValue, modelValue, scope) {
-                    if (scope.formState.awesomeIsForced) {
-                        return '维文书名';
-                    } else {
-                        return '哈文书名';
-                    }
-                }
-            }
-        },
-        {
-            key: 'desc',
-            type: 'textarea',
-            templateOptions: {
-                label: '简介',
-                placeholder: '此处输入汉语简介',
-                description: '这是description'
-            },
-            expressionProperties: {
-                'templateOptions.focus': 'formState.awesomeIsForced',
-                'templateOptions.descriptin': function(viewValue, modelValue, scope) {
-                    if (scope.formstate.awesomeIsForced) {
-                        return 'its get focus';
-                    }
-                }
-            }
-        }
-    ];
+    Tag.gets(1).success(function(response) {
+        vm.tags = response.tags;
+    });
 
-    function onSubmit() {
-        alert(JSON.stringify(vm.model), null, 2);
-    }
+    // initialization
+    vm.lang = vm.item_lang[0];
+
+    $scope.$watch('vm.lang', function(newValue, oldValue) {
+        vm.content_plus = newValue.id <= 2? {
+            about: '维语',
+            labelForTitle: '维语书名',
+            labelForDesc: '维语简介',
+            placeholderForTitle: '此处输入维语书名, 必填',
+            placeholderForDesc: '此处输入维语简介'
+        } : {
+            about: '哈语',
+            labelForTitle: '哈语书名',
+            labelForDesc: '哈语简介',
+            placeholderForTitle: '此处输入哈语书名, 必填',
+            placeholderForDesc: '此处输入哈语简介'
+        };
+    }, true);
+
 });
 
 app.controller('HomeCtrl', function($scope) {
@@ -345,12 +299,27 @@ app.controller('TagViewCtrl', function($scope, $http, Tag) {
     }
 });
 
+app.factory('Classify', function ($http) {
+    var Classify;
+
+    Classify = {
+        gets: function (item_type) {
+            return $http.jsonp(options.api.base_url + '/classifys/item_type/' + item_type + '?callback=JSON_CALLBACK');
+        },
+        create: function () {
+            
+        }
+    }
+
+    return Classify;
+})
+
 app.factory('Tag', function($http) {
     var Tag;
 
     Tag = {
-        gets: function () {
-            return '';
+        gets: function (lang_type) {
+            return $http.jsonp(options.api.base_url + '/tags/lang_type/' + lang_type + '?callback=JSON_CALLBACK');
         },
         create: function(lang_type, data) {
             return $http.post(options.api.base_url+'/tags/lang_type/'+lang_type, JSON.stringify(data));

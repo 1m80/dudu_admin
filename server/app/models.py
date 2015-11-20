@@ -41,7 +41,7 @@ class TopClassify(db.Model):
     __tablename__ = 'top_classify'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(64), nullable=False)
     desc = db.Column(db.Text)
     lang = db.Column(db.Integer, nullable=False) # 语种
     item_type = db.Column(db.Integer, nullable=False) # 类型，如电子书，有声读物，视频
@@ -50,7 +50,7 @@ class Classify(db.Model):
     __tablename__ = 'classify'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(64), nullable=False)
     desc = db.Column(db.Text)
     top_classify = db.Column(db.Integer, db.ForeignKey('top_classify.id'))
 
@@ -63,7 +63,7 @@ class Tag(db.Model):
     __tablename__ = 'tag'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(64), nullable=False)
     lang = db.Column(db.Integer, nullable=False)
     desc = db.Column(db.Text)
 
@@ -71,10 +71,10 @@ class Common(db.Model):
     __tablename__ = 'common'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
+    title = db.Column(db.String(120), nullable=False)
     desc = db.Column(db.Text)
     lang = db.Column(db.Integer, nullable=False)
-    name_plus = db.Column(db.String(120))
+    title_plus = db.Column(db.String(120))
     desc_plus = db.Column(db.Text)
     top_classify = db.Column(db.Integer, db.ForeignKey('top_classify.id'))
     classify = db.Column(db.Integer, db.ForeignKey('classify.id'))
@@ -84,7 +84,7 @@ class Common(db.Model):
     editor = db.Column(db.Integer, db.ForeignKey('admin_users.id'))
     brower = db.Column(db.Integer, nullable=False, default=0) # 浏览量
 
-    is_sale = db.Column(db.Boolean, default=False)
+    is_sale = db.Column(db.Boolean, default=False) #是否上架
 
 class Ebook(Common):
     __tablename__ = 'ebooks'

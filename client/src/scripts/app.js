@@ -1,6 +1,6 @@
 'use strict';
 
-var app =angular.module('app', ['ngRoute', 'formly', 'formlyBootstrap']);
+var app =angular.module('app', ['ngRoute', 'ngSanitize', 'ui.select', 'angular.filter', 'ui.tinymce']);
 
 var options = {};
 options.api = {};
@@ -9,19 +9,19 @@ options.api.base_url = 'http://127.0.0.1:5000/api';
 //item kind 
 var item_types = [
     {
-        name: '电子书',
+        title: '电子书',
         id: 1
     }, {
-        name: '有声读物',
+        title: '有声读物',
         id: 2
     }, {
-        name: '视频',
+        title: '视频',
         id: 3
     }, {
-        name: '音乐',
+        title: '音乐',
         id: 4
     }, {
-        name: '图片',
+        title: '图片',
         id: 5
     }
 ];
@@ -29,13 +29,13 @@ var item_types = [
 //item lang
 var item_lang = [
     {
-        name: '汉语',
+        title: '汉语',
         id: 1
     }, {
-        name: '维语',
+        title: '维语',
         id: 2
     }, {
-        name: '哈语',
+        title: '哈语',
         id: 3
     }
 ];
