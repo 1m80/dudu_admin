@@ -25,8 +25,10 @@
     "tinymce": "^4.2.8"
   },
   "devDependencies": {
+    "browser-sync": "^2.10.0",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
+    "gulp-browser-sync": "0.0.4",
     "gulp-cache": "^0.4.0",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.6.0",

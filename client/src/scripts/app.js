@@ -1,6 +1,6 @@
 'use strict';
 
-var app =angular.module('app', ['ngRoute', 'ngSanitize', 'ui.select', 'angular.filter', 'ui.tinymce']);
+var app =angular.module('app', ['ngRoute', 'ngSanitize', 'ui.select', 'angular.filter', 'ui.tinymce', 'ui.date']);
 
 var options = {};
 options.api = {};

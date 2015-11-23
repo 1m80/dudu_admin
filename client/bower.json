@@ -1,0 +1,35 @@
+{
+  "name": "dudu_admin",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "1m80 <malone.cool@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/1m80/dudu_admin",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-date": "~0.0.8",
+    "angular": "~1.4.8",
+    "bootstrap": "~3.3.5",
+    "angular-route": "~1.4.8",
+    "ui-select": "angular-ui-select#~0.13.2",
+    "angular-ui-tinymce": "~0.0.10",
+    "angular-filter": "~0.5.8",
+    "angular-sanitize": "~1.4.8"
+  },
+  "devDependencies": {
+    "gulp": "~3.9.0"
+  }
+}

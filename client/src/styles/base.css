@@ -29,3 +29,8 @@ a:focus {
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+.select2-container-multi .select2-choices {
+    margin:0 15px;
+    width: 700px;
+}

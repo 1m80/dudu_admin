@@ -13,6 +13,7 @@ app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
     Tag.gets(1).success(function(response) {
         vm.tags = response.tags;
     });
+    vm.tag = [];
 
     // initialization
     vm.lang = vm.item_lang[0];

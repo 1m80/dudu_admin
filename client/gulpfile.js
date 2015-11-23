@@ -7,8 +7,8 @@ var gulp = require('gulp'),
     clean = require('gulp-clean'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
-    cache = require('gulp-cache'),
-    livereload = require('gulp-livereload');
+    browserSync = require('browser-sync').create(),
+    cache = require('gulp-cache');
 
 var path = {
     scripts: ['src/scripts/**/*.js'],
@@ -50,9 +50,25 @@ gulp.task('clean', function() {
         .pipe(clean());
 });
 
-gulp.task('default', function() {
-    gulp.start('scripts');
-});
+gulp.task('js-watch', ['scripts'], browserSync.reload);
+
+gulp.task('css-watch', ['styles'], browserSync.reload);
+
+gulp.task('serve', function() {
+    browserSync.init({
+        server: "./"
+    });
+
+    gulp.watch(path.styles, ['css-watch']);
+    gulp.watch(path.scripts, ['js-watch']);
+
+    gulp.watch('./index.html').on('change', browserSync.reload);
+
+    gulp.watch('./partials/*.html').on('change', browserSync.reload);
+
+})
+
+gulp.task('default', ['serve']);
 
 gulp.task('watch', function() {
 
@@ -64,9 +80,4 @@ gulp.task('watch', function() {
 
     // 看守所有图片档
     gulp.watch(path.images, ['images']);
-
-    livereload.listen();
-
-    gulp.watch(['dist/**']).on('change', livereload.changed);
-
 });
