@@ -1,10 +1,21 @@
-app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
+app.controller('EbookCreateCtrl', function($scope, Classify, Tag, $fileUploader) {
     var vm = $scope.vm = {};
 
+    vm.coverUploader  = $fileUploader.create({
+        url: options.api.base_url+'/api/upload/cover',
+        autoUpload: true,
+        filters: [
+            function (item) {
+                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        ]
+    });
     // assignment
     vm.item_lang = item_lang;
 
-    //get from server
+
+    //get from server 
     Classify.gets(1).success(function(response) {
         vm.top_classifys = response.top_classifys;
         vm.classifys = response.classifys;

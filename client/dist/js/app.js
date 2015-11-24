@@ -1,6 +1,6 @@
 'use strict';
 
-var app =angular.module('app', ['ngRoute', 'ngSanitize', 'ui.select', 'angular.filter', 'ui.tinymce', 'ui.date']);
+var app =angular.module('app', ['ui.router', 'ngSanitize', 'ui.select', 'angular.filter', 'ui.tinymce', 'ui.date', 'angularFileUpload']);
 
 var options = {};
 options.api = {};
@@ -44,15 +44,16 @@ app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
 });
 
-app.controller('AppCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',
-    function AppCtrl($scope, $location, $window, UserService, AuthenticationService) {
+app.controller('AppCtrl', ['$scope', '$state', '$window', 'UserService', 'AuthenticationService',
+    function AppCtrl($scope, $state, $window, UserService, AuthenticationService) {
         $scope.signIn = function signIn(username, password) {
             if (username != undefined && password !== undefined) {
                 UserService.signIn(username, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
                     $scope.username = data.username;
-                    $location.path('/');
+                    console.log('sign in success');
+                    $state.go('home');
                 }).error(function(status, data) {
                     console.log(status);
                     console.log(data);
@@ -61,12 +62,12 @@ app.controller('AppCtrl', ['$scope', '$location', '$window', 'UserService', 'Aut
         }
 
         $scope.signOut = function signOut() {
+            console.log('sign out');
             if (AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = false;
                 delete $window.sessionStorage.token;
-                console.log('signout');
-                $location.path('/signin');
             }
+            $state.go('signin');
         }
     }
 ]);
@@ -87,7 +88,7 @@ app.factory('UserService', function($http) {
     };
 });
 
-app.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
+app.factory('TokenInterceptor', function ($q, $window, AuthenticationService, $location) {
     return {
         request: function (config) {
             config.headers = config.headers || {};
@@ -125,57 +126,45 @@ app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
 });
 
-app.config(['$locationProvider', '$routeProvider', 
-  function($location, $routeProvider) {
-    $routeProvider.
-        when('/', {
+app.config(function($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.
+        when('/index', '/').
+        otherwise('/');
+
+    $stateProvider.
+        state('home', {
+            url: '/',
             templateUrl: 'partials/home.html',
             controller: 'HomeCtrl',
             access: { requireAuthentication: true }
         }).
-        when('/ebooks', {
+        state('signin', {
+            url: '/signin',
+            templateUrl: 'partials/user.signin.html'
+        }).
+        state('ebooks', {
+            url: '/ebooks',
+            templateUrl: 'partials/ebook.base.html',
+            access: { requireAuthentication: true }
+        }).
+        state('ebooks.list', {
+            url: '/ebooks/list',
             templateUrl: 'partials/ebook.list.html',
             access: { requireAuthentication: true }
         }).
-        when('/ebooks/create', {
-            templateUrl: 'partials/ebook.create.html',
-            controller: 'EbookCreateCtrl',
-            access: { requireAuthentication: true }
-        }).
-        when('/ebooks/classifys', {
-            templateUrl: 'partials/ebook.classify.html',
-            controller: 'EbookClassifyCtrl',
-            access: { requireAuthentication: true }
-        }).
-        when('/ebooks/:id', {
-            templateUrl: 'partials/ebook.view.html',
-            controller: 'EbookViewCtrl',
-            access: { requireAuthentication: true }
-        }).
-        when('/data', {
-            templateUrl:'partials/data.home.html',
-            access: { requireAuthentication: true }
-        }).
-        when('/data/tag', {
-            templateUrl: 'partials/data.tag.html',
-            controller: 'TagViewCtrl',
-            access: { requireAuthentication: true }
-        }).
-        when('/signin', {
-            templateUrl: 'partials/user.signin.html'
-        }).
-        otherwise({
-            redirectTo: '/'
+        state('ebooks.classify', {
+            url: '/ebooks/classify',
+            templateUrl: 'partials/ebook.list.html',
+            controller: 'EbookCreateCtrl'
         });
+});
 
-    $location.html5Mode(true);
-}]);
-
-
-app.run(function($rootScope, $location, $window, AuthenticationService) {
-    $rootScope.$on('$routeChangeStart', function(event, nextRoute, currentRoute) {
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requireAuthentication && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
-            $location.path('/signin');
+app.run(function($rootScope, $window, AuthenticationService, $state, $location) {
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+        if (toState != null && toState.access != null && toState.access.requireAuthentication && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
+            console.log('333');
+            $location.path('signin');
+            console.log('222');
         }
     });
 });
@@ -227,13 +216,24 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 });
 
-app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
+app.controller('EbookCreateCtrl', function($scope, Classify, Tag, $fileUploader) {
     var vm = $scope.vm = {};
 
+    vm.coverUploader  = $fileUploader.create({
+        url: options.api.base_url+'/api/upload/cover',
+        autoUpload: true,
+        filters: [
+            function (item) {
+                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        ]
+    });
     // assignment
     vm.item_lang = item_lang;
 
-    //get from server
+
+    //get from server 
     Classify.gets(1).success(function(response) {
         vm.top_classifys = response.top_classifys;
         vm.classifys = response.classifys;

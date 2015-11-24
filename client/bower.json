@@ -27,7 +27,9 @@
     "ui-select": "angular-ui-select#~0.13.2",
     "angular-ui-tinymce": "~0.0.10",
     "angular-filter": "~0.5.8",
-    "angular-sanitize": "~1.4.8"
+    "angular-sanitize": "~1.4.8",
+    "angular-file-upload": "~2.2.0",
+    "angular-ui-router": "~0.2.15"
   },
   "devDependencies": {
     "gulp": "~3.9.0"
