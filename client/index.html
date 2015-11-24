@@ -12,7 +12,7 @@
       <link rel="stylesheet" type="text/css" href="./dist/css/base.css">
     </head>
     <body>
-    <div class="container">
+    <div>
       <nav class="navbar navbar-default navbar-fixed-top" ng-controller="NavbarCtrl">
         <div class="container">
           <div class="navbar-header">
@@ -30,12 +30,12 @@
               <li class="dropdown" ng-class="{active: isActive('ebooks')}">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">图书<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a ui-sref="ebooks.list">电子书</a></li>
+                  <li><a ui-sref="ebook.list">电子书</a></li>
                   <li><a href="#">有声读物</a></li>
                 </ul>
               </li>
-              <li ng-class="{active: isActive('topic')}"><a href="/topic">专题</a></li>
-              <li ng-class="{active: isActive('data')}"><a href="/data">数据</a></li>
+              <li ng-class="{active: isActive('topic')}"><a href="#">专题</a></li>
+              <li ng-class="{active: isActive('data')}"><a ui-sref="data.home">数据</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">

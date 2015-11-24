@@ -142,29 +142,55 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/signin',
             templateUrl: 'partials/user.signin.html'
         }).
-        state('ebooks', {
+        state('ebook', {
             url: '/ebooks',
             templateUrl: 'partials/ebook.base.html',
             access: { requireAuthentication: true }
         }).
-        state('ebooks.list', {
-            url: '/ebooks/list',
+        state('ebook.list', {
+            url: '/list',
             templateUrl: 'partials/ebook.list.html',
             access: { requireAuthentication: true }
         }).
-        state('ebooks.classify', {
-            url: '/ebooks/classify',
-            templateUrl: 'partials/ebook.list.html',
-            controller: 'EbookCreateCtrl'
+        state('ebook.classify', {
+            url: '/classifys',
+            templateUrl: 'partials/ebook.classify.html',
+            controller: 'EbookClassifyCtrl',
+            access: { requireAuthentication: true }
+        }).
+        state('ebook.create', {
+            url: '/create',
+            templateUrl: 'partials/ebook.create.html',
+            controller: 'EbookCreateCtrl',
+            access: { requireAuthentication: true }
+        }).
+        state('ebook.upload.cover', {
+            url: '/upload/cover',
+            templateUrl: '/partials/ebook.cover.html',
+            controller: 'EbookCoverCtrl',
+            access: { requireAuthenTication:true }
+        }).
+        state('data', {
+            url: '/data',
+            templateUrl: 'partials/data.base.html',
+            access: { requireAuthentication: true }
+        }).
+        state('data.home', {
+            url: '/home',
+            templateUrl: 'partials/data.home.html',
+            access: { requireAuthentication: true }
+        }).
+        state('data.tag', {
+            url: '/tags',
+            templateUrl: 'partials/data.tag.html',
+            access: { requireAuthentication: true }
         });
 });
 
-app.run(function($rootScope, $window, AuthenticationService, $state, $location) {
+app.run(function($rootScope, $window, AuthenticationService, $state) {
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (toState != null && toState.access != null && toState.access.requireAuthentication && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
-            console.log('333');
-            $location.path('signin');
-            console.log('222');
+            $state.go('signin');
         }
     });
 });
@@ -216,19 +242,13 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 });
 
-app.controller('EbookCreateCtrl', function($scope, Classify, Tag, $fileUploader) {
+app.controller('EbookCoverCtrl', function($scope) {
+    
+});
+
+app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
     var vm = $scope.vm = {};
 
-    vm.coverUploader  = $fileUploader.create({
-        url: options.api.base_url+'/api/upload/cover',
-        autoUpload: true,
-        filters: [
-            function (item) {
-                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-            }
-        ]
-    });
     // assignment
     vm.item_lang = item_lang;
 

@@ -1,16 +1,6 @@
-app.controller('EbookCreateCtrl', function($scope, Classify, Tag, $fileUploader) {
+app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
     var vm = $scope.vm = {};
 
-    vm.coverUploader  = $fileUploader.create({
-        url: options.api.base_url+'/api/upload/cover',
-        autoUpload: true,
-        filters: [
-            function (item) {
-                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-            }
-        ]
-    });
     // assignment
     vm.item_lang = item_lang;
 

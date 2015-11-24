@@ -18,7 +18,7 @@ a:focus {
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
-.container {
+.row {
    padding-right: 15px;
    padding-left: 15px;
    margin-right: auto;
@@ -33,4 +33,32 @@ a:focus {
 .select2-container-multi .select2-choices {
     margin:0 15px;
     width: 700px;
+}
+
+#status-buttons a {
+    color:#FFF;
+    display:inline-block;
+    font-size:12px;
+    margin-right:10px;
+    text-align:center;
+    text-transform:uppercase;
+}
+#status-buttons a:hover {
+    text-decoration:none;
+}
+ 
+/* we will style the span as the circled number */
+#status-buttons span {
+    background:#080808;
+    display:block;
+    height:30px;
+    margin:0 auto 10px;
+    padding-top:5px;
+    width:100px;
+    border-radius:50%;
+}
+ 
+/* active buttons turn light green-blue*/
+#status-buttons a.active span {
+    background:#00BC8C;
 }

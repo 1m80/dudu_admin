@@ -66,7 +66,9 @@ gulp.task('serve', function() {
 
     gulp.watch('./partials/*.html').on('change', browserSync.reload);
 
-})
+    gulp.watch('./dist/*').on('change', browserSync.reload);
+
+});
 
 gulp.task('default', ['serve']);
 
