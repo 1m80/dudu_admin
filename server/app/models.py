@@ -82,7 +82,7 @@ class Common(db.Model):
     upload_date = db.Column(db.DateTime, default=datetime.now())
     update_date = db.Column(db.DateTime)
     editor = db.Column(db.Integer, db.ForeignKey('admin_users.id'))
-    brower = db.Column(db.Integer, nullable=False, default=0) # 浏览量
+    browser = db.Column(db.Integer, nullable=False, default=0) # 浏览量
 
     is_sale = db.Column(db.Boolean, default=False) #是否上架
 
@@ -96,10 +96,27 @@ class Ebook(Common):
     isbn = db.Column(db.String(32)) # ISBN
     orig_price = db.Column(db.Float,default=0) # 原价
     cur_price = db.Column(db.Float) # 现价
-    discount = db.Column(db.Float) # 折扣
     sell = db.Column(db.Integer, nullable=False, default=0) # 销量
-    cover = db.Column(db.String(120), nullable=False)
-    pre_path = db.Column(db.String(120), nullable=False) # 预览地址
-    download_path = db.Column(db.String(120), nullable=False) # 可下载文件地址
+    cover = db.Column(db.String(120))
+    pre_path = db.Column(db.String(120)) # 预览地址
+    download_path = db.Column(db.String(120)) # 可下载文件地址
+
+    def _find_tag(self, tag_id):
+        q = Tag.query.filter_by(id=tag_id)
+        t = q.first()
+        return t
+
+    def _get_tags(self):
+        return [x. name for x in self.tags]
+
+    def _set_tags(self, tag_ids):
+        # clear the list first
+        while self.tags:
+            del self.tags[0]
+        # add new tags:
+        for tag_id in tag_ids:
+            self.tags.append(self._find_tag(tag_id))
+
+    str_tags = property(_get_tags, _set_tags, 'Property str_tags is a simple wrapper for tags relations')
 
 

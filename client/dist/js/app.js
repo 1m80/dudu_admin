@@ -51,6 +51,8 @@ app.controller('AppCtrl', ['$scope', '$state', '$window', 'UserService', 'Authen
                 UserService.signIn(username, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.user_id = data.id;
+                    $window.sessionStorage.username = username;
                     $scope.username = data.username;
                     console.log('sign in success');
                     $state.go('home');
@@ -66,6 +68,7 @@ app.controller('AppCtrl', ['$scope', '$state', '$window', 'UserService', 'Authen
             if (AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = false;
                 delete $window.sessionStorage.token;
+                delete $window.sessionStorage.user_id;
             }
             $state.go('signin');
         }
@@ -246,12 +249,14 @@ app.controller('EbookCoverCtrl', function($scope) {
     
 });
 
-app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
+app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook) {
     var vm = $scope.vm = {};
 
     // assignment
     vm.item_lang = item_lang;
 
+    // sign of error warning
+    vm.sign_error = 0;
 
     //get from server 
     Classify.gets(1).success(function(response) {
@@ -262,10 +267,20 @@ app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
     Tag.gets(1).success(function(response) {
         vm.tags = response.tags;
     });
-    vm.tag = [];
+   
 
     // initialization
+    vm.title_plus = '';
     vm.lang = vm.item_lang[0];
+    vm.tag = [];
+    vm.publisher = '';
+    vm.pub_date = '';
+    vm.isbn = '';
+    vm.desc = '';
+    vm.desc_plus = '';
+    vm.orig_price = 0;
+    vm.cur_price = 0;
+    vm.is_sale = false;
 
     $scope.$watch('vm.lang', function(newValue, oldValue) {
         vm.content_plus = newValue.id <= 2? {
@@ -283,13 +298,47 @@ app.controller('EbookCreateCtrl', function($scope, Classify, Tag) {
         };
     }, true);
 
+
+    // functions 
+    vm.submit = function() {
+        var newEbook = {
+            'title': vm.title,
+            'lang': vm.lang.id,
+            'title_plus': vm.title_plus,
+            'top_classify': vm.top_classify.id,
+            'classify': vm.classify.id,
+            'author': vm.author,
+            'publisher': vm.publisher,
+            'pub_date': Date.parse(vm.pub_date),
+            'isbn': vm.isbn,
+            'desc': vm.desc,
+            'desc_plus': vm.desc_plus,
+            'orig_price': vm.orig_price,
+            'cur_price': vm.cur_price,
+            'is_sale': vm.is_sale,
+            'editor': $window.sessionStorage.user_id
+        }
+
+        newEbook.tags = [];
+        for(var k in vm.tag) {
+            newEbook.tags.push(vm.tag[k].id);
+        }
+        Ebook.create(newEbook).success(function() {
+            console.log('success');
+        }).error(function(response) {
+            console.log(response);
+        })
+
+    }
+
 });
 
 app.controller('HomeCtrl', function($scope) {
     
 });
 
-app.controller('NavbarCtrl', function ($scope, AuthenticationService, $location) {
+app.controller('NavbarCtrl', function ($scope, AuthenticationService, $location, $window) {
+    $scope.username = $window.sessionStorage.username;
     $scope.isActive = function (route) {
         return route === $location.path().split('/')[1];
     };
@@ -333,6 +382,21 @@ app.factory('Classify', function ($http) {
     }
 
     return Classify;
+})
+
+app.factory('Ebook', function($http) {
+    var Ebook;
+
+    Ebook = {
+        gets: function() {
+            
+        },
+        create: function(data) {
+            return $http.post(options.api.base_url+'/ebooks', JSON.stringify(data));
+        }
+    }
+
+    return Ebook;
 })
 
 app.factory('Tag', function($http) {

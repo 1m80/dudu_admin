@@ -51,6 +51,8 @@ app.controller('AppCtrl', ['$scope', '$state', '$window', 'UserService', 'Authen
                 UserService.signIn(username, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.user_id = data.id;
+                    $window.sessionStorage.username = username;
                     $scope.username = data.username;
                     console.log('sign in success');
                     $state.go('home');
@@ -66,6 +68,7 @@ app.controller('AppCtrl', ['$scope', '$state', '$window', 'UserService', 'Authen
             if (AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = false;
                 delete $window.sessionStorage.token;
+                delete $window.sessionStorage.user_id;
             }
             $state.go('signin');
         }

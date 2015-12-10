@@ -12,20 +12,20 @@
 
   <form role="form" class="form-horizontal" name="ebookForm">
     <div class="form-group">
-      <label for="" class="col-sm-2 control-label">书名</label>
-      <div class="col-sm-10"><input type="text" class="form-control" ng-model="vm.title" /></div>
+      <label for="" class="col-sm-2 control-label">书名*</label>
+      <div class="col-sm-10"><input type="text" name="title" class="form-control" ng-model="vm.title" placeholder="书名是必填项" required /></div>
     </div>
     <div class="form-group">
-      <label for="" class="col-sm-2 control-label">语种</label>
+      <label for="" class="col-sm-2 control-label">语种*</label>
       <div class="btn-group col-sm-10">
         <label ng-repeat="lang in vm.item_lang" ng-class="{btn: true, 'btn-default': true, active: lang.id == vm.lang.id}">
-          <input type="radio" class="hidden" name="langRadio" ng-model="vm.lang" ng-value="lang" />{{ lang.title }}
+          <input type="radio" class="hidden" name="langRadio" ng-model="vm.lang" ng-value="lang" required/>{{ lang.title }}
         </label>
       </div>
     </div>
     <div class="form-group" ng-hide="vm.lang.id === 1">
       <label for="" class="col-sm-2 control-label">{{ vm.content_plus.labelForTitle }}</label>
-      <div class="col-sm-10"><input type="text" class="form-control" ng-model="vm.title_plus" placeholder="{{ vm.content_plus.placeholderForTitle }}"></div>
+      <div class="col-sm-10"><input type="text" class="form-control" name="title_plus" ng-model="vm.title_plus" placeholder="{{ vm.content_plus.placeholderForTitle }}" /></div>
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">标签</label>
@@ -33,39 +33,39 @@
         <ui-select-match placeholder="选择标签,可多选">
           {{$item.title}}
         </ui-select-match>
-        <ui-select-choices repeat="t in vm.tags | propsFilter: {title:$select.search, desc:$select.search}">
+        <ui-select-choices repeat="t in vm.tags |filter: {lang: vm.lang.id } | propsFilter: {title:$select.search, desc:$select.search}">
           <div ng-bind-html="t.title | highlight: $select.search"></div>
           <small>简介: <span ng-bind-html="t.desc | highlight: $select.search"></span></small>
         </ui-select-choices>
       </ui-select>
     </div>
     <div class="form-group">
-      <label for="" class="col-sm-2 control-label">一级分类</label>
+      <label for="" class="col-sm-2 control-label">一级分类*</label>
       <div class="col-sm-4">
-        <select class="form-control" ng-model="vm.topclassify" ng-options=" tc.title for tc in vm.top_classifys | filter: {lang: vm.lang.id} | unique: 'title' " required />
+        <select class="form-control" name="top_classify" ng-model="vm.top_classify" ng-options=" tc.title for tc in vm.top_classifys | filter: {lang: vm.lang.id} | unique: 'title' " required />
       </div>
     </div>
     <div class="form-group">
-      <label for="" class="col-sm-2 control-label">二级分类</label>
+      <label for="" class="col-sm-2 control-label">二级分类*</label>
       <div class="col-sm-4">
-        <select class="form-control" ng-model="vm.classify" ng-options=" c.title for c in vm.classifys | filter: {top_classify: vm.topclassify.id} | unique: 'title' " required />
+        <select class="form-control" name="classify" ng-model="vm.classify" ng-options=" c.title for c in vm.classifys | filter: {top_classify: vm.topclassify.id} | unique: 'title' " required />
       </div>
     </div>
     <div class="form-group">
-      <label for="" class="col-sm-2 control-label">作者</label>
-      <div class="col-sm-4"><input type="text" class="form-control" ng-model="vm.author"></div>
+      <label for="" class="col-sm-2 control-label">作者*</label>
+      <div class="col-sm-4"><input type="text" class="form-control" name="author" ng-model="vm.author" placeholder="本书作者, 必填项, 维哈文书籍请以对应语种形式输入作者姓名" required /></div>
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">出版社</label>
-      <div class="col-sm-6"><input type="text" class="form-control" ng-model="vm.publisher"></div>
+      <div class="col-sm-6"><input type="text" class="form-control" ng-model="vm.publisher" placeholder="选填, 维哈文书籍请以对应语种形式输入"></div>
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">出版日期</label>
-      <div class="col-sm-6"><input ui-date ui-date-format="DD, d MM, yy" ng-model="vm.pub_date"></div>
+      <div class="col-sm-6"><input ui-date ng-model="vm.pub_date" placeholder="选填"></div>
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">ISBN</label>
-      <div class="col-sm-6"><input type="text" class="form-control" ng-model="vm.isbn"></div>
+      <div class="col-sm-6"><input type="text" class="form-control" ng-model="vm.isbn" placeholder="选填"></div>
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">简介</label>
@@ -77,26 +77,35 @@
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">原价</label>
-      <div class="col-sm-4"><input type="text" class="form-control" ng-model="vm.orig_price"></div>
+      <div class="col-sm-4"><input type="number" step="0.01" class="form-control" ng-model="vm.orig_price"></div>
     </div>
     <div class="form-group">
-      <label for="" class="col-sm-2 control-label">现价</label>
-      <div class="col-sm-4"><input type="text" class="form-control" ng-model="vm.cur_price"></div>
-    </div>
-    <div class="form-group">
-      <label for="" class="col-sm-2 control-label">折扣</label>
-      <div class="col-sm-4"><input type="text" class="form-control" ng-model="vm.discount"></div>
+      <label for="" class="col-sm-2 control-label">现价*</label>
+      <div class="col-sm-4">
+        <input type="number" step="0.01" class="form-control" name="cur_price" ng-model="vm.cur_price" required />
+        <p class="help-block">本书售价,必填项, 原价和折扣可选填一项</p>
+      </div>
     </div>
     <div class="form-group">
       <label for="" class="col-sm-2 control-label">是否上架</label>
       <div class="col-sm-1"><input type="checkbox" class="form-control" ng-model="vm.is_sale"></div>
     </div>
+    <div class="col-sm-8 col-sm-offset-2">
+      <div class="alert alert-danger" style="margin-bottom: 0px; border: 0; padding: 0px;">
+        <ul>
+          <li ng-show="(ebookForm.title.$dirty || vm.sign_error > 0 ) && ebookForm.title.$error.required">汉语书名必须填写</li>
+          <li ng-show="vm.lang.id > 1 && (ebookForm.title_plus.$dirty || vm.sign_error > 0) && ebookForm.title_plus.$error.required">请输入与书籍语种对应的书名</li>
+          <li ng-show="(ebookForm.top_classify.$dirty || vm.sign_error > 0) && ebookForm.top_classify.$error.required">一级分类必须选择</li>
+          <li ng-show="(ebookForm.classify.$dirty || vm.sign_error > 0) && ebookForm.classify.$error.required">二级分类必须选择</li>
+          <li ng-show="(ebookForm.author.$dirty || vm.sign_error>0) && ebookForm.author.$error.required">书籍作者必须填写</li>
+          <li ng-show="(ebookForm.cur_price.$dirty || vm.sign_error>0) && ebookForm.cur_price.$error.required">售价必须填写</li>
+        </ul>
+      </div>
+    </div>
     <div class="form-group">
       <div class="col-sm-offset-4 col-sm-10">
-        <button class="btn btn-primary btn-submit" type="button">添加</button>
+        <button class="btn btn-primary btn-submit" type="submit" ng-click="vm.submit()" ng-disabled="!ebookForm.$valid">添加</button>
       </div>
     </div>
   </form>
-  <h2>{{ test }}</h2>
-  <pre> {{ ebookForm | json }}</pre>
 </div>

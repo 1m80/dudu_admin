@@ -31,7 +31,7 @@ class TagListView(Resource):
         tags = Tag.query.filter_by(lang=lang_type).all()
         return {'tags': marshal(tags, tag_fields)}
 
-    #@auth.login_required
+    @auth.login_required
     def post(self, lang_type):
         args = self.parser.parse_args()
         title = args['title']

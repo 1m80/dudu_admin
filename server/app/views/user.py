@@ -30,7 +30,7 @@ class SessionView(Resource):
         user = User.query.filter_by(username=args['username']).first()
         if user and flask_bcrypt.check_password_hash(user.password, args['password']):
             token = user.generate_auth_token()
-            return jsonify({'username':user.username, 'token':base64.b64encode(token+':x')})
+            return jsonify({'username':user.username, 'id':user.id, 'token':base64.b64encode(token+':x')})
         return '', 401
 
 api.add_resource(UserView, '/api/users')
