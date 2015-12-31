@@ -10,14 +10,14 @@ app.controller('TagViewCtrl', function($scope, $http, Tag) {
         $scope.showAddTagBtn = false;
     };
 
-    $scope.addTag = function(name, lang, desc) {
+    $scope.addTag = function(title, lang, desc) {
         $scope.showAddTagBtn = true;
 
         if (desc === undefined) {
             desc = '';
         }
 
-        Tag.create(lang.id, {name:name, lang:lang.id, desc:desc}).success(function() {
+        Tag.create(lang.id, {title:title, lang:lang.id, desc:desc}).success(function() {
             console.log('ok');
         });
     }

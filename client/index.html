@@ -8,7 +8,7 @@
       <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.css">
       <link rel="stylesheet" type="text/css" href="./bower_components/ui-select/dist/select.css">
       <link rel="stylesheet" type="text/css" href="./bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
-      <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
+      <link rel="stylesheet" type="text/css" href="./dist/css/select2.css">
       <link rel="stylesheet" type="text/css" href="./dist/css/base.css">
     </head>
     <body>
@@ -24,6 +24,18 @@
             <a class="navbar-brand" ui-sref="home">读读网内容管理</a>
           </div>
           <div id="navbar-brand" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li ng-class="{active: isActive('')}"><a href="/">首页</a></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" data-toggle="dropdown" ng-class="{active: isActive('ebooks')}">图书</a>
+                <ul class="dropdown-menu">
+                  <li><a ui-sref="ebook.list">电子书</a></li>
+                  <li><a>有声读物</a></li>
+              </ul>
+              <li ng-class="{active:isActive('')}"><a ui-sref="data.home">数据</a></li>
+              <li ng-class="{active:isActive('')}"><a>配置</a></li>
+            </ul>
+              
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{ username }}<span class="caret"></span></a>
@@ -42,26 +54,18 @@
 
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-              <li ng-class="{active: isActive('')}"><a href="/">首页</a></li>
-              <li class="dropdown" ng-class="{active: isActive('ebooks')}">
-              </li>
-              <li ng-class="{active: isActive('')}"><a href="/">专题</a></li>
-            </ul>
-
-            <ul class="nav nav-sidebar">
-              <li ng-class="{active: isActive('')}"><a ui-sref="data.home">数据</a></li>
-            </ul>
-
-            <ul class="nav nav-sidebar">
-            </ul>
+          <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2">
+            <div class="alert alert-warning" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Warning!</strong> Better check yourself, you're not looking too good.
+            </div>
           </div>
-
-          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div ui-view=""></div>
-          </div>
+          <div ui-view=""></div>
         </div>
+        <div class="alert alert-warning" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Warning!</strong> Better check yourself, you're not looking too good.
+</div>
       </div>
 
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>

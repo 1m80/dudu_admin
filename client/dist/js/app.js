@@ -153,6 +153,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         state('ebook.list', {
             url: '/list',
             templateUrl: 'partials/ebook.list.html',
+            controller: 'EbookListCtrl',
             access: { requireAuthentication: true }
         }).
         state('ebook.classify', {
@@ -167,11 +168,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
             controller: 'EbookCreateCtrl',
             access: { requireAuthentication: true }
         }).
-        state('ebook.upload.cover', {
-            url: '/upload/cover',
-            templateUrl: '/partials/ebook.cover.html',
-            controller: 'EbookCoverCtrl',
+        state('upload', {
+            url: '/upload',
+            templateUrl: '/partials/upload.base.html'
+        }).
+        state('upload.cover', {
+            url: '/cover/{itemId:[0-9]{1,6}}',
+            templateUrl: '/partials/upload.cover.html',
+            controller: 'UploadCoverCtrl',
             access: { requireAuthenTication:true }
+        }).
+        state('upload.pdfPreview', {
+            url: '/pdfpreview/{itemId:[0-9]{1,6}}',
+            templateUrl: '/partials/upload.pdfpreview.html',
+            controller: 'UploadPdfPreviewCtrl',
+            access: { requireAuthentication:true }
         }).
         state('data', {
             url: '/data',
@@ -186,17 +197,70 @@ app.config(function($stateProvider, $urlRouterProvider) {
         state('data.tag', {
             url: '/tags',
             templateUrl: 'partials/data.tag.html',
+            controller: 'TagViewCtrl',
             access: { requireAuthentication: true }
         });
 });
 
-app.run(function($rootScope, $window, AuthenticationService, $state) {
+app.run(function($rootScope, $window, AuthenticationService, $state, $stateParams) {
+    $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams;
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (toState != null && toState.access != null && toState.access.requireAuthentication && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
             $state.go('signin');
         }
     });
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        $rootScope.previousState = fromState.name;
+        $rootScope.previousState_params = fromParams;
+    });
 });
+
+
+app.directive('ngThumb', ['$window', function($window) {
+    var helper = {
+        support: !!($window.FileReader && $window.CanvasRenderingContext2D),
+        isFile: function(item) {
+            return angular.isObject(item) && item instanceof $window.File;
+        },
+        isImage: function(file) {
+            var type =  '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+        }
+    };
+
+    return {
+        restrict: 'A',
+        template: '<canvas/>',
+        link: function(scope, element, attributes) {
+            if (!helper.support) return;
+
+            var params = scope.$eval(attributes.ngThumb);
+
+            if (!helper.isFile(params.file)) return;
+            if (!helper.isImage(params.file)) return;
+
+            var canvas = element.find('canvas');
+            var reader = new FileReader();
+
+            reader.onload = onLoadFile;
+            reader.readAsDataURL(params.file);
+
+            function onLoadFile(event) {
+                var img = new Image();
+                img.onload = onLoadImage;
+                img.src = event.target.result;
+            }
+
+            function onLoadImage() {
+                var width = params.width || this.width / this.height * params.height;
+                var height = params.height || this.height / this.width * params.width;
+                canvas.attr({ width: width, height: height });
+                canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
+            }
+        }
+    };
+}]);
 
 app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     // sign to show or hide the (add button && add form)
@@ -245,11 +309,7 @@ app.controller('EbookClassifyCtrl', function($scope, $http, $window) {
     };
 });
 
-app.controller('EbookCoverCtrl', function($scope) {
-    
-});
-
-app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook) {
+app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook, $state) {
     var vm = $scope.vm = {};
 
     // assignment
@@ -323,14 +383,21 @@ app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook
         for(var k in vm.tag) {
             newEbook.tags.push(vm.tag[k].id);
         }
-        Ebook.create(newEbook).success(function() {
-            console.log('success');
+
+        Ebook.create(newEbook).success(function(data) {
+            $state.go('upload.cover', { itemId:data.id });
         }).error(function(response) {
             console.log(response);
-        })
+        });
 
     }
 
+});
+
+app.controller('EbookListCtrl', function($scope, $state) {
+    $scope.go = function() {
+        $state.go('upload.pdfPreview', { itemId: 2 });
+    }
 });
 
 app.controller('HomeCtrl', function($scope) {
@@ -356,15 +423,83 @@ app.controller('TagViewCtrl', function($scope, $http, Tag) {
         $scope.showAddTagBtn = false;
     };
 
-    $scope.addTag = function(name, lang, desc) {
+    $scope.addTag = function(title, lang, desc) {
         $scope.showAddTagBtn = true;
 
         if (desc === undefined) {
             desc = '';
         }
 
-        Tag.create(lang.id, {name:name, lang:lang.id, desc:desc}).success(function() {
+        Tag.create(lang.id, {title:title, lang:lang.id, desc:desc}).success(function() {
             console.log('ok');
+        });
+    }
+});
+
+app.controller('UploadCoverCtrl', function($scope, $rootScope, FileUploader) {
+    var uploader = $scope.uploader = new FileUploader({
+        url: options.api.base_url + '/upload/cover/'+$rootScope.$stateParams.itemId,
+    });
+
+    uploader.filters.push({
+        name: 'imageFilter',
+        fn: function(item, options) {
+            var type = "|" + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) != -1;
+        }
+    });
+    uploader.filters.push({
+        name: 'limitNum',
+        fn: function(item, options) {
+            return this.queue.length < 1;
+        }
+    });
+
+
+    $scope.completeUpload = false;
+
+    uploader.onCompleAll = function() {
+        $scope.completeUpload = true;
+        if ($rootScope.previousState === 'ebook.create') {
+            $state.go('upload.pdfPreview', {itemId: $rootScope.$stateParams.itemId});
+        }
+        $state.go('upload.pdfPreview', {itemId: $rootScope.$stateParams.itemId});
+    }
+
+});
+
+app.controller('UploadPdfPreviewCtrl', function($scope, $rootScope, $http, FileUploader) {
+    console.log($rootScope);
+
+    var uploader = $scope.uploader = new FileUploader({
+        url: options.api.base_url + '/upload/pdfpreview',
+        formData: [
+            {item_id: $rootScope.$stateParams.itemId}
+        ]
+    });
+
+    uploader.filters.push({
+        name: 'zipFilter',
+        fn: function(item, options) {
+            var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|zip|'.indexOf(type) != -1;
+        }
+    });
+    uploader.filters.push({
+        name: 'limitNum',
+        fn: function(item, options) {
+            return this.queue.length < 1;
+        }
+    });
+
+    $scope.completeUpload = false;
+
+    $scope.updateFtpAddress = function() {
+        console.log($scope.ftpAddress);
+        $http.post(options.api.base_url+'/upload/preview', JSON.stringify({'pre_path':$scope.ftpAddress})).success(function(data) {
+            console.log(data);
+        }).error(function(data) {
+            console.log(data);
         });
     }
 });

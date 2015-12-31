@@ -10,3 +10,4 @@ wtforms
 wtforms_alchemy
 MySQL-python
 Flask-JSON
+PIL

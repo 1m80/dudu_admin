@@ -8,6 +8,7 @@ from app.models import User
 
 from . import user, ebook, data
 
+
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -18,6 +19,7 @@ def after_request(response):
 
 @auth.verify_password
 def verify_password(username_or_token, password):
+    print username_or_token
     user = User.verify_auth_token(username_or_token)
     if not user:
         user = User.query.filter_by(username=username_or_token).first()
@@ -30,5 +32,6 @@ def verify_password(username_or_token, password):
 def unauthorized():
     # return 403 instead of 401 to prevent browsers from displaying the default
     # auth dialog
-    return make_response(jsonify({'message': 'Unauthorized access'}), 403)
+    return make_response(jsonify({'message': 'Unauthorized access!!'}), 403)
+
 

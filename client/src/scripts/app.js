@@ -153,6 +153,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         state('ebook.list', {
             url: '/list',
             templateUrl: 'partials/ebook.list.html',
+            controller: 'EbookListCtrl',
             access: { requireAuthentication: true }
         }).
         state('ebook.classify', {
@@ -167,11 +168,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
             controller: 'EbookCreateCtrl',
             access: { requireAuthentication: true }
         }).
-        state('ebook.upload.cover', {
-            url: '/upload/cover',
-            templateUrl: '/partials/ebook.cover.html',
-            controller: 'EbookCoverCtrl',
+        state('upload', {
+            url: '/upload',
+            templateUrl: '/partials/upload.base.html'
+        }).
+        state('upload.cover', {
+            url: '/cover/{itemId:[0-9]{1,6}}',
+            templateUrl: '/partials/upload.cover.html',
+            controller: 'UploadCoverCtrl',
             access: { requireAuthenTication:true }
+        }).
+        state('upload.pdfPreview', {
+            url: '/pdfpreview/{itemId:[0-9]{1,6}}',
+            templateUrl: '/partials/upload.pdfpreview.html',
+            controller: 'UploadPdfPreviewCtrl',
+            access: { requireAuthentication:true }
         }).
         state('data', {
             url: '/data',
@@ -186,14 +197,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
         state('data.tag', {
             url: '/tags',
             templateUrl: 'partials/data.tag.html',
+            controller: 'TagViewCtrl',
             access: { requireAuthentication: true }
         });
 });
 
-app.run(function($rootScope, $window, AuthenticationService, $state) {
+app.run(function($rootScope, $window, AuthenticationService, $state, $stateParams) {
+    $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams;
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (toState != null && toState.access != null && toState.access.requireAuthentication && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
             $state.go('signin');
         }
+    });
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        $rootScope.previousState = fromState.name;
+        $rootScope.previousState_params = fromParams;
     });
 });

@@ -1,12 +1,16 @@
 # -*-coding:utf-8-*-
 
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 from flask_restful import Resource, reqparse, fields, marshal
 from flask_json import as_json_p, json_response
 import json
+import werkzeug
+from werkzeug import secure_filename
 
 from app import api, app, auth, db
-from app.models import Tag, TopClassify, Classify
+from app.models import Tag, TopClassify, Classify, Common
+from app.utils import img_upload
+from app.utils.cross_domain import allow_cross_domain
 
 tag_fields = {
     'id': fields.Integer,
@@ -28,7 +32,7 @@ class TagListView(Resource):
     def get(self, lang_type):
         args = self.parser.parse_args()
         callback = args['callback']
-        tags = Tag.query.filter_by(lang=lang_type).all()
+        tags = Tag.query.all()
         return {'tags': marshal(tags, tag_fields)}
 
     @auth.login_required
@@ -139,6 +143,49 @@ class ClassifyListView(Resource):
         return make_response(jsonify({'message': 'wrong params'}), 400)
 
 
+
+class UploadCoverView(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('item_id', type=int, location='form')
+        super(UploadCoverView, self).__init__()
+
+    @auth.login_required
+    def post(self, item_id):
+        args = self.parser.parse_args()
+
+        cover = request.files['file']
+
+        if cover and img_upload.allowed_file(cover.filename):
+            cover_path = img_upload.upload_cover(cover)
+            common = Common.query.get(item_id)
+            common.cover = cover_path
+            db.session.commit()
+            return make_response(jsonify({'message':u'上传成功'}), 200)
+        return make_response(jsonify({'message':u'上传文件格式不正确'}), 400)
+
+class UploadPreView(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('item_id', type=int, location='form')
+        self.parser.add_argument('pre_path', type=str, location='json')
+        super(UploadPreView, self).__init__()
+
+    def post(self):
+        args = self.parser.parse_args()
+
+        pre_path = args['pre_path']
+        if pre_path:
+            print pre_path
+        else:
+            print 'no pre_path'
+
+        
+        
+
+
 api.add_resource(TagListView, '/api/tags/lang_type/<int:lang_type>')
 api.add_resource(TopClassifyListView, '/api/top_classifys/item_type/<int:item_type>')
 api.add_resource(ClassifyListView, '/api/classifys/item_type/<int:item_type>')
+api.add_resource(UploadCoverView, '/api/upload/cover/<int:item_id>')
+api.add_resource(UploadPreView, '/api/upload/preview')

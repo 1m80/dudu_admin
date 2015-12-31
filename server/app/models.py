@@ -78,32 +78,18 @@ class Common(db.Model):
     desc_plus = db.Column(db.Text)
     top_classify = db.Column(db.Integer, db.ForeignKey('top_classify.id'))
     classify = db.Column(db.Integer, db.ForeignKey('classify.id'))
-    tags = db.relationship('Tag', secondary=tags_common, backref=db.backref('common', lazy='dynamic'))
+    tags = db.relationship('Tag', enable_typechecks=False, secondary=tags_common, backref=db.backref('common', lazy='dynamic'))
     upload_date = db.Column(db.DateTime, default=datetime.now())
     update_date = db.Column(db.DateTime)
     editor = db.Column(db.Integer, db.ForeignKey('admin_users.id'))
     browser = db.Column(db.Integer, nullable=False, default=0) # 浏览量
+    item_type = db.Column(db.Integer) #类型, 1为电子书,2为有声读物,  3为视频, 4为音频, 5为图片
 
+    cover = db.Column(db.String(120)) #封面
     is_sale = db.Column(db.Boolean, default=False) #是否上架
 
-class Ebook(Common):
-    __tablename__ = 'ebooks'
-
-    id = db.Column(db.Integer, db.ForeignKey('common.id'), primary_key=True)
-    author = db.Column(db.String(64))
-    publisher = db.Column(db.String(64)) # 出版社
-    pub_date = db.Column(db.String(64)) # 出版日期
-    isbn = db.Column(db.String(32)) # ISBN
-    orig_price = db.Column(db.Float,default=0) # 原价
-    cur_price = db.Column(db.Float) # 现价
-    sell = db.Column(db.Integer, nullable=False, default=0) # 销量
-    cover = db.Column(db.String(120))
-    pre_path = db.Column(db.String(120)) # 预览地址
-    download_path = db.Column(db.String(120)) # 可下载文件地址
-
     def _find_tag(self, tag_id):
-        q = Tag.query.filter_by(id=tag_id)
-        t = q.first()
+        t = Tag.query.filter_by(id=tag_id).first()
         return t
 
     def _get_tags(self):
@@ -115,8 +101,25 @@ class Ebook(Common):
             del self.tags[0]
         # add new tags:
         for tag_id in tag_ids:
+            cur_tag = self._find_tag(tag_id)
             self.tags.append(self._find_tag(tag_id))
 
     str_tags = property(_get_tags, _set_tags, 'Property str_tags is a simple wrapper for tags relations')
+
+
+
+class Ebook(db.Model):
+    __tablename__ = 'ebooks'
+
+    id = db.Column(db.Integer, db.ForeignKey('common.id'), primary_key=True)
+    author = db.Column(db.String(64))
+    publisher = db.Column(db.String(64)) # 出版社
+    pub_date = db.Column(db.String(64)) # 出版日期
+    isbn = db.Column(db.String(32)) # ISBN
+    orig_price = db.Column(db.Float,default=0) # 原价
+    cur_price = db.Column(db.Float) # 现价
+    sell = db.Column(db.Integer, nullable=False, default=0) # 销量
+    pre_path = db.Column(db.String(120)) # 预览地址
+    download_path = db.Column(db.String(120)) # 可下载文件地址
 
 

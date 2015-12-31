@@ -5,7 +5,7 @@ from flask_restful import Resource, reqparse, fields, marshal
 from flask_json import as_json_p
 
 from app import api, app, auth, db
-from app.models import Ebook, TopClassify, Classify
+from app.models import Ebook, TopClassify, Classify, Common
 
 ebook_fields = {
     'id': fields.Integer,
@@ -55,53 +55,61 @@ class EbookListView(Resource):
         super(EbookListView, self).__init__()
 
 
+    @auth.login_required
     def post(self):
-       args = self.parser.parse_args()
-       title = args['title']
-       desc = args['desc']
-       lang = args['lang']
-       title_plus = args['title_plus']
-       author = args['author']
-       classify = args['classify']
-       cur_price = args['cur_price']
-       desc_plus = args['desc']
-       editor = args['editor']
-       is_sale = args['is_sale']
-       isbn = args['isbn']
-       pub_date = args['pub_date']
-       publisher = args['publisher']
-       tags = args['tags']
-       top_classify = args['top_classify']
-       orig_price = args['orig_price']
+        args = self.parser.parse_args()
+        title = args['title']
+        desc = args['desc']
+        lang = args['lang']
+        title_plus = args['title_plus']
+        author = args['author']
+        classify = args['classify']
+        cur_price = args['cur_price']
+        desc_plus = args['desc_plus']
+        editor = args['editor']
+        is_sale = args['is_sale']
+        isbn = args['isbn']
+        pub_date = args['pub_date']
+        publisher = args['publisher']
+        tags = args['tags']
+        top_classify = args['top_classify']
+        orig_price = args['orig_price']
 
-       if title and lang and top_classify and classify and author:
-           if  not Ebook.query.filter_by(title=title, lang=lang, top_classify=top_classify, classify=classify, author=author).first():
-               ebook = Ebook(
-                   title=title,
-                   desc=desc,
-                   lang=lang,
-                   title_plus=title_plus,
-                   desc_plus=desc_plus,
-                   top_classify=top_classify,
-                   classify=classify, editor=editor,
-                   browser=0,
-                   is_sale=is_sale,
-                   author=author,
-                   publisher=publisher,
-                   pub_date=pub_date,
-                   isbn=isbn,
-                   orig_price=orig_price,
-                   cur_price=cur_price,
-                   sell=0)
-               db.session.add(ebook)
-               db.session.commit()
-               ebook.str_tags = tags
-               db.session.commit()
-               return make_response(jsonify({'message': 'add success!'}), 201)
+        if title and lang and top_classify and classify and author:
+            if  not Common.query.filter_by(title=title, lang=lang, top_classify=top_classify, classify=classify).first():
+                common = Common(
+                    title=title,
+                    desc=desc,
+                    lang=lang,
+                    title_plus=title_plus,
+                    desc_plus=desc_plus,
+                    top_classify=top_classify,
+                    classify=classify,
+                    editor=editor,
+                    browser=0,
+                    item_type=0,
+                    is_sale=is_sale)
+                db.session.add(common)
+                db.session.commit()
+                common_id = Common.query.filter_by(title=title, lang=lang, top_classify=top_classify, classify=classify).first().id
+                ebook = Ebook(
+                    id = common_id,
+                    author=author,
+                    publisher=publisher,
+                    pub_date=pub_date,
+                    isbn=isbn,
+                    orig_price=orig_price,
+                    cur_price=cur_price,
+                    sell=0)
+                db.session.add(ebook)
+                db.session.commit()
+                common.str_tags = tags
+                db.session.commit()
+                return make_response(jsonify({'message': 'add success!','id':common_id}), 201)
 
-           return make_response(jsonify({'message': 'the book exists already!'}), 404)
+            return make_response(jsonify({'message': 'the book exists already!'}), 400)
 
-       return make_response(jsonify({'message': 'wrong params'}))
+        return make_response(jsonify({'message': 'wrong params'}))
 
 
 

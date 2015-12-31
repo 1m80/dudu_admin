@@ -1,0 +1,115 @@
+<div class="doc-section">
+  <h3>预览文件上传</h3>
+  <p class="help-block">
+    仅允许一个文件, 格式为 zip, 当文件大于50M时, 建议通过 ftp 上传.
+  </p>
+  <form role="form">
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="chooseFtp">选择 ftp 上传
+      </label>
+    </div>
+  </form>
+  <div ng-show="chooseFtp">
+    <form role="form" class="form-horizontal" name="ftpAddressForm">
+      <div class="form-group">
+        <label for="ftpAddress" class="col-sm-2 control-label">文件夹地址</label>
+        <div class="col-sm-8 col-md-8">
+          <input type="text" name="formAddress" class="form-control" ng-model="ftpAddress" placeholder="/media/..." ng-pattern="/^/media(/[\w\d_-]+)+/" required/>
+          <p class="help-block">
+            请输入 ftp 上传后预览图片所在的文件夹路径.
+          </p>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-md-offset-4">
+          <button class="btn btn-success" ng-click="updateFtpAddress()" ng-disabled="!ftpAddressForm.$valid">下一步</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div ng-hide="chooseFtp">
+    <div class="col-md-9">
+      <h4>当前队列: {{ uploader.queue.lenght }}</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th witdh="%50">名称</th>
+            <th ng-show="uploader.isHTML5">大小</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in uploader.queue">
+            <td>
+              <strong>{{ item.file.name }}</strong>
+              <div ng-thumb="{ file: item._file, height: 100 }"></div>
+            </td>
+            <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }}MB</td>
+            <td class="text-center">
+              <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+              <span ng-show="item.isCancel"><i class="glyhphicon glyphicon-ban-circle"></i></span>
+              <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+            </td>
+            <td nowrap>
+              <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                <span class="glyphicon glyphicon-upload"></span>上传
+              </button>
+              <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                <span class="glyphicon glyphicon-ban-circle"></span>取消上传
+              </button>
+              <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                <span class="glyphicon glyphicon-trash"></span>删除
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h5>上传进度</h5>
+      <div class="progress" style="">
+        <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <h4>选择预览文件压缩包</h4>
+      <div ng-show="uploader.isHTML5">
+        <div nv-file-drop="" uploader="uploader">
+          <div nv-file-over="" uploader="uploader"
+            over-class="another-file-over-class" class="well my-drop-zone">
+            拖动文件到这里
+          </div>
+        </div>
+      </div>
+      <input type="file" uploader="uploader" nv-file-select="">
+      <br/>
+    </div>
+    <div class="col-sm-offset-4 col-md-offset-4">
+      <button class="btn btn-success" ng-click="toNext" ng-disabled="!completeUpload">下一步</button>
+    </div>
+  </div>
+
+
+
+  <div class="doc-section">
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <h3 class="panel-title">提示!</h3>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item">
+          将预览图片打包为 <strong>zip</strong> 格式的文件上传. 当压缩包大于50M时,建议通过ftp上传, 这样更加安全,不容易出错.
+        </li>
+        <li class="list-group-item">
+          压缩包和压缩包内图片的名字都不应该包含汉字, 空格.
+        </li>
+        <li class="list-group-item">
+          通过 ftp 上传时, 预览图片集应该上传到文件夹 /media/pdf_previews 下, 图片列表的文件夹命名应该<strong>只包含英文字符和数字</strong>. 如果包含中文字符, 将无法提交.
+        </li>
+        <li class="list-group-item">
+          通过 ftp 上传时, 建议以所在月份为名建立文件夹,并在文件夹下再新建图片文件夹, 如上传书籍<烤羊肉串的阿里木>的预览图片时,文件夹路径应该是 <strong>/media/pdf_previews/201512/kyrcdalm<strong>.
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

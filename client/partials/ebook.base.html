@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm-2">
+  <div class="col-sm-2 col-md-2 sidebar">
     <a ui-sref="ebook.create"><button type="button" class="btn btn-primary" >添加新书</button></a>
     <div class="row block-content">
       <div class="btn-group-vertical" role="group">
@@ -8,10 +8,14 @@
         <button type="button" class="btn btn-default">所有电子书</button>
       </div>
     </div>
-   <a ui-sref="ebook.classify"><button type="button" class="btn btn-default">分类管理</button></a>
+    <ul class="nav nav-sidebar">
+      <li>
+        <a ui-sref="ebook.classify">分类管理</a>
+      </li>
+    </ul>
   </div>
 
-  <div class="col-sm-10">
+  <div class="col-sm-10 col-md-10" id="page-wrapper">
     <div ui-view="">
     </div>
   </div>

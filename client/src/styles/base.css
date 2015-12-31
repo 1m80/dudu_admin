@@ -52,6 +52,7 @@ a:focus {
     background-color: #428bca;
     color: #fff;
 }
+
 .main {
     padding: 20px;
 }
@@ -87,7 +88,7 @@ ui-select-choices ui-select-choices-content select2-results {
 #status-buttons a:hover {
     text-decoration:none;
 }
- 
+
 /* we will style the span as the circled number */
 #status-buttons span {
     background:#080808;
@@ -98,8 +99,25 @@ ui-select-choices ui-select-choices-content select2-results {
     width:100px;
     border-radius:50%;
 }
- 
+
 /* active buttons turn light green-blue*/
 #status-buttons a.active span {
     background:#00BC8C;
+}
+
+#page-wrapper {
+    position: fixed;
+    top: 51px;
+    right: 0;
+    bottom: 0;
+    display: block;
+    overflow-y: scroll;
+}
+
+.my-drop-zone { border: dotted 3px lightgray; }
+.nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+.another-file-over-class { border: dotted 3px green; }
+
+.doc-section {
+  margin-top: 60px;
 }

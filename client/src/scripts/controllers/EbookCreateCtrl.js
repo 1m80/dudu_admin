@@ -1,4 +1,4 @@
-app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook) {
+app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook, $state) {
     var vm = $scope.vm = {};
 
     // assignment
@@ -72,11 +72,12 @@ app.controller('EbookCreateCtrl', function($scope, $window, Classify, Tag, Ebook
         for(var k in vm.tag) {
             newEbook.tags.push(vm.tag[k].id);
         }
-        Ebook.create(newEbook).success(function() {
-            console.log('success');
+
+        Ebook.create(newEbook).success(function(data) {
+            $state.go('upload.cover', { itemId:data.id });
         }).error(function(response) {
             console.log(response);
-        })
+        });
 
     }
 
